@@ -40,8 +40,8 @@ $ lr = 0.00125 \times \text{num_gpus} \times \text{img_per_gpu} $
 ```shell script
 $ chmod +x tools/dist_train.sh
 
-$ vim ./configs/htc_r50_fpn_1x.py
-$ vim ./configs/htc_x101_64x4d_fpn_1x.py 
+$ vim cascade_r50_fpn_1x.py
+$ vim cascade_x101_64x4d_fpn_1x.py 
 ```
 ## setup mmdet
 ```shell script
@@ -50,7 +50,8 @@ python setup.py develop
 
 ## Train
 ```shell script
-python ./tools
+./tools/train.py ./configs/cascade_r50_fpn_1x.py --no-validate --gpus=1
+
 ```
 
 
