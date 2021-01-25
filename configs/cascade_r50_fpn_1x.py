@@ -103,6 +103,7 @@ train_cfg = dict(
             pos_iou_thr=0.7,
             neg_iou_thr=0.3,
             min_pos_iou=0.3,
+            match_low_quality=True,
             ignore_iof_thr=-1),
         sampler=dict(
             type='RandomSampler',
@@ -127,6 +128,7 @@ train_cfg = dict(
                 pos_iou_thr=0.5,
                 neg_iou_thr=0.5,
                 min_pos_iou=0.5,
+                match_low_quality=False,
                 ignore_iof_thr=-1),
             sampler=dict(
                 type='RandomSampler',
@@ -142,6 +144,7 @@ train_cfg = dict(
                 pos_iou_thr=0.6,
                 neg_iou_thr=0.6,
                 min_pos_iou=0.6,
+                match_low_quality=False,
                 ignore_iof_thr=-1),
             sampler=dict(
                 type='RandomSampler',
@@ -157,6 +160,7 @@ train_cfg = dict(
                 pos_iou_thr=0.7,
                 neg_iou_thr=0.7,
                 min_pos_iou=0.7,
+                match_low_quality=False,
                 ignore_iof_thr=-1),
             sampler=dict(
                 type='RandomSampler',
@@ -166,8 +170,7 @@ train_cfg = dict(
                 add_gt_as_proposals=True),
             pos_weight=-1,
             debug=False)
-    ],
-    stage_loss_weights=[1, 0.5, 0.25])
+    ])
 test_cfg = dict(
     rpn=dict(
         nms_across_levels=False,
@@ -177,7 +180,9 @@ test_cfg = dict(
         nms_thr=0.7,
         min_bbox_size=0),
     rcnn=dict(
-        score_thr=0.001, nms=dict(type='soft_nms', iou_thr=0.5, min_score=0.001), max_per_img=100))
+        score_thr=0.05,
+        nms=dict(type='soft_nms', iou_thr=0.5, min_score=0.001),
+        max_per_img=100))
 # dataset settings
 dataset_type = 'UnderWater'
 data_root = '/media/alex/80CA308ECA308288/alex_dataset/URPC-2020/'
@@ -226,13 +231,13 @@ data = dict(
         pipeline=test_pipeline))
 
 # optimizer
-optimizer = dict(type='SGD', lr=0.0025, momentum=0.9, weight_decay=0.0001)
+optimizer = dict(type='SGD', lr=0.00125, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
 # learning policy
 lr_config = dict(
     policy='step',
     warmup='linear',
-    warmup_iters=500,
+    warmup_iters=2000,
     warmup_ratio=1.0 / 3,
     step=[8, 11])
 
