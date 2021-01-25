@@ -94,7 +94,7 @@ def main():
     data_path = '/media/alex/80CA308ECA308288/alex_dataset/URPC-2020/train'
     xml_path =  osp.join(data_path, 'box')
     img_path =  osp.join(data_path, 'image')
-    json_path = osp.join(data_path, 'annotation', 'train.json')
+    json_path = osp.join(data_path, 'annotation', 'voc_all.json')
 
     os.makedirs(os.path.dirname(json_path), exist_ok=True)
 
@@ -105,3 +105,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
