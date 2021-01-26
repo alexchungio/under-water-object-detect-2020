@@ -10,7 +10,6 @@
 # @ Software   : PyCharm
 #-------------------------------------------------------
 
-import json
 import cv2 as cv
 import numpy as np
 from PIL import Image, ImageFont, ImageDraw
@@ -94,9 +93,8 @@ def draw_box_with_opencv(image, bbox, label, color_dict):
 
 
 def main():
+
     img_path = './demo/demo.jpg'
-
-
     pil_color_dict = {'echinus': 'red', 'starfish': 'green', 'holothurian': 'blue', 'scallop': 'yellow'}
     opencv_color_dict = {'echinus': ImageColor.getcolor('red', 'RGB')[::-1],
                          'starfish': ImageColor.getcolor('green', 'RGB')[::-1],
