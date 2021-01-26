@@ -22,8 +22,8 @@ from mmdet.core import underwater_classes
 from glob import glob
 from tqdm import tqdm
 from PIL import Image
-label_ids = {name: i + 1 for i, name in enumerate(underwater_classes())}
-
+# label_ids = {name: i + 1  for i, name in enumerate(underwater_classes())}  # for mmdet_v1
+label_ids = {name: i  for i, name in enumerate(underwater_classes())} # for mmdet_v2
 
 def get_segmentation(points):
 
