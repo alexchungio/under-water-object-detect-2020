@@ -12,9 +12,14 @@ https://open-mmlab.oss-cn-beijing.aliyuncs.com/v2.0/htc/htc_r50_fpn_20e_coco/htc
 python ./tools/data_process/xml2coco.py
 ```
 ### generate pseudo json label of test image 
+```shell script
+python ./tools/data_process/generate_test_anns.py
 ```
 
-```
+## EDA
+
+[data analysis](./docs/data_analysis.ipynb)
+
 
 ## Config
 
@@ -50,7 +55,7 @@ python setup.py develop
 
 ## Train
 ```shell script
-./tools/train.py ./configs/cascade_r50_fpn_1x.py --no-validate --gpus=1
+python ./tools/train.py ./configs/cascade_r50_fpn_1x.py --no-validate --gpus=1
 
 ```
 
@@ -98,4 +103,5 @@ python setup.py develop
 
 
 * <https://github.com/Wakinguup/Underwater_detection>
+* <https://blog.csdn.net/u014479551/article/details/107762513#commentBox>
 
