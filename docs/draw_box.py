@@ -34,10 +34,10 @@ def draw_box_with_pil(image, bbox, label, color_dict):
     img_h = image.size[1]
 
     bbox = np.array(bbox, dtype=np.int32).reshape(-1, 4)
-    print('image shape ({}{})'.format(img_w, img_h))
+    print('image shape ({},{})'.format(img_w, img_h))
     # set font
     font = ImageFont.truetype(font=fm.findfont(fm.FontProperties()),
-                              size=np.floor(1.5e-2 * img_w ).astype(np.int32), encoding="unic")
+                              size=np.floor(2.5e-2 * img_w ).astype(np.int32), encoding="unic")
 
     # draw box
     draw = ImageDraw.Draw(image)
@@ -65,18 +65,19 @@ def draw_box_with_opencv(image, bbox, label, color_dict):
     :param color_dict:
     :return:
     """
+
+    img_w = image.size[0]
+    img_h = image.size[1]
     image = np.array(image)
-    img_w = image.shape[0]
-    img_h = image.shape[1]
 
     bbox = np.array(bbox, dtype=np.int32).reshape(-1, 4)
-    print('image shape ({}{})'.format(img_w, img_h))
+    print('image shape ({},{})'.format(img_w, img_h))
     # set font
     font = cv.FONT_HERSHEY_SIMPLEX
 
     for box, tag in zip(bbox, label):
         # get label size
-        label_size = cv.getTextSize(tag, font, 1, 2)
+        label_size = cv.getTextSize(tag, font, 1.6, 2)
         # get label start point
         text_origin = np.array([box[0], box[1] - label_size[0][1]])
 
@@ -85,7 +86,7 @@ def draw_box_with_opencv(image, bbox, label, color_dict):
         cv.rectangle(image, tuple(text_origin), tuple(text_origin + label_size[0]),
                       color=color_dict[tag], thickness=-1)  # thickness=-1 represent set fill format
 
-        cv.putText(image, tag, (box[0], box[1]), font, 1, (255, 255, 255), 2)
+        cv.putText(image, tag, (box[0], box[1]), font, 1.5, (255, 255, 255), 2)
 
     plt.style.use({'figure.figsize': (20, 10)})
     plt.imshow(image)
@@ -101,11 +102,13 @@ def main():
                          'starfish': ImageColor.getcolor('green', 'RGB')[::-1],
                          'holothurian': ImageColor.getcolor('blue', 'RGB')[::-1],
                          'scallop': ImageColor.getcolor('yellow', 'RGB')[::-1]}
+    # bbox = [[890, 593, 1463, 990]]
     bbox = [[890, 593, 1463, 990]]
     label = ['starfish']
     img = Image.open(img_path)
     draw_box_with_pil(img, bbox, label, pil_color_dict)
     draw_box_with_opencv(img, bbox, label, opencv_color_dict)
+
 
 if __name__ == "__main__":
     main()
