@@ -70,14 +70,19 @@ class UnderWater(CustomDataset):
         gt_labels = []
         gt_bboxes_ignore = []
         gt_masks_ann = []
-
+        img_w, img_h = int(img_info['width']), int(img_info['height'])
         for i, ann in enumerate(ann_info):
             if ann.get('ignore', False):
                 continue
             x1, y1, w, h = ann['bbox']
+
             if ann['area'] <= 0 or w < 1 or h < 1:
                 continue
-            bbox = [x1, y1, x1 + w - 1, y1 + h - 1]
+            x1 = max(x1, 0)
+            y1 = max(y1, 0)
+            x2 = min(x1 + w - 1, img_w)
+            y2 = min(y1 + h - 1, img_h)
+            bbox = [x1, y1, x2, y2]
             if ann.get('iscrowd', False):
                 gt_bboxes_ignore.append(bbox)
             else:
