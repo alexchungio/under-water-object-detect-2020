@@ -22,8 +22,8 @@ from mmdet.core import underwater_classes
 from glob import glob
 from tqdm import tqdm
 from PIL import Image
-# label_ids = {name: i + 1  for i, name in enumerate(underwater_classes())}  # for mmdet_v1
-label_ids = {name: i  for i, name in enumerate(underwater_classes())} # for mmdet_v2
+
+cat_label = {name: i for i, name in enumerate(underwater_classes())}  # for mmdet_v1
 
 def get_segmentation(points):
 
@@ -39,22 +39,24 @@ def parse_xml(xml_path, img_id, anno_id):
         name = obj.find('name').text
         if name == 'waterweeds':
             continue
-        category_id = label_ids[name]
+        category_id = cat_label[name]
         bnd_box = obj.find('bndbox')
-        xmin = int(bnd_box.find('xmin').text)
-        ymin = int(bnd_box.find('ymin').text)
-        xmax = int(bnd_box.find('xmax').text)
-        ymax = int(bnd_box.find('ymax').text)
-        w = xmax - xmin + 1
-        h = ymax - ymin + 1
-        area = w*h
-        segmentation = get_segmentation([xmin, ymin, w, h])
+        x_min = int(bnd_box.find('xmin').text)
+        y_min = int(bnd_box.find('ymin').text)
+        x_max = int(bnd_box.find('xmax').text)
+        y_max = int(bnd_box.find('ymax').text)
+        # w = x_max - x_min + 1  # mmdet v1
+        # h = y_max - y_min + 1
+        w = x_max - x_min + 1  # mmdet v2
+        h = y_max - y_min + 1
+        area = w * h
+        segmentation = get_segmentation([x_min, y_min, w, h])
         annotation.append({
                         "segmentation": segmentation,
                         "area": area,
                         "iscrowd": 0,
                         "image_id": img_id,
-                        "bbox": [xmin, ymin, w, h],
+                        "bbox": [x_min, y_min, w, h],
                         "category_id": category_id,
                         "id": anno_id,
                         "ignore": 0})
@@ -82,7 +84,7 @@ def cvt_annotations(img_path, xml_path, out_file):
         img_id += 1
 
     categories = []
-    for k,v in label_ids.items():
+    for k,v in cat_label.items():
         categories.append({"name": k, "id": v})
     final_result = {"images": images, "annotations": annotations, "categories": categories}
     mmcv.dump(final_result, out_file)

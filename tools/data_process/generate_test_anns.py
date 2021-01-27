@@ -18,9 +18,8 @@ from tqdm import tqdm
 from PIL import Image
 from mmdet.core import underwater_classes
 
-
-# label_ids = {name: i + 1  for i, name in enumerate(underwater_classes())}  # for mmdet_v1
-label_ids = {name: i  for i, name in enumerate(underwater_classes())} # for mmdet_v2
+# cat_label = {name: i + 1  for i, name in enumerate(underwater_classes())}  # for mmdet_v1
+cat_label = {name: i for i, name in enumerate(underwater_classes())}  # for mmdet_v2
 
 
 def save(images, annotations, path):
@@ -30,7 +29,7 @@ def save(images, annotations, path):
     ann['annotations'] = annotations
 
     categories = []
-    for k, v in label_ids.items():
+    for k, v in cat_label.items():
         categories.append({"name": k, "id": v})
     ann['categories'] = categories
     json.dump(ann, open(path, 'w'))
