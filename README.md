@@ -1,13 +1,21 @@
 # under-water-detect
 
+## Baseline
 
-## pretrained model
-https://open-mmlab.oss-cn-beijing.aliyuncs.com/v2.0/htc/htc_r50_fpn_20e_coco/htc_r50_fpn_20e_coco_20200319-fe28c577.pth
+* htc_r50_fpn_20e_coco [config](https://open-mmlab.oss-cn-beijing.aliyuncs.com/v2.0/htc/htc_r50_fpn_20e_coco/htc_r50_fpn_20e_coco_20200319-fe28c577.pth), [pretrained model](http://download.openmmlab.com/mmdetection/v2.0/htc/htc_r50_fpn_20e_coco/htc_r50_fpn_20e_coco_20200319-fe28c577.pth)
+* htc_x101_64x4d_fpn_16x1_20e_coco [config](https://github.com/open-mmlab/mmdetection/tree/master/configs/htc/htc_x101_64x4d_fpn_16x1_20e_coco.py), [pretrained model](http://download.openmmlab.com/mmdetection/v2.0/htc/htc_x101_64x4d_fpn_16x1_20e_coco/htc_x101_64x4d_fpn_16x1_20e_coco_20200318-b181fd7a.pth)
+* htc_x101_64x4d_fpn_dconv_c3-c5_mstrain_400_1400_16x1_20e_coco [config](https://github.com/open-mmlab/mmdetection/tree/master/configs/htc/htc_x101_64x4d_fpn_dconv_c3-c5_mstrain_400_1400_16x1_20e_coco.py), [pretrained model](http://download.openmmlab.com/mmdetection/v2.0/htc/htc_x101_64x4d_fpn_dconv_c3-c5_mstrain_400_1400_16x1_20e_coco/htc_x101_64x4d_fpn_dconv_c3-c5_mstrain_400_1400_16x1_20e_coco_20200312-946fd751.pth)
 
 
-## Dataset
+## EDA
+[data analysis](./docs/data_analysis.ipynb)
+[check data](./docs/check_and_draw_box.ipynb)
 
-### convert label format from xml to json
+## 数据集处理
+### load dataset
+<https://code.ihub.org.cn/projects/1372/files>
+
+### convert xml to json
 ```shell script
 python ./tools/data_process/xml2coco.py
 ```
@@ -16,55 +24,56 @@ python ./tools/data_process/xml2coco.py
 python ./tools/data_process/generate_test_anns.py
 ```
 
-## EDA
+## 设计思路
 
-[data analysis](./docs/data_analysis.ipynb)
-[check data](./docs/check_and_draw_box.ipynb)
-
-## Config
+### 基线模型
 
 | 配置 | 设置 |
 | :-----:| :----: 
 | 模型 | CascadeRCNN + ResNeXt101 + FPN | 
 | anchor_ratio | (0.5, 1, 2) | 
-| 多尺度训练|(4096, 600), (4096, 1400)| 
-| 多尺度预测|(4096, 600), (4096, 1000), (4096, 1400)|
+| 多尺度训练(MS)|(4096, 600), (4096, 1400)| 
+| 多尺度预测(MS)|(4096, 600), (4096, 1000), (4096, 1400)|
 | soft-NMS| (iou_thr=0.5, min_score=0.0001)|
 | epoch| 1 x schedule(12 epoch)|
 | steps| [8, 12]|
 | fp16| 开启|
 | pretrained|Hybrid Task Cascade(HTC)|
 
-
 ### lr computer
+
 $ lr = 0.00125 \times \text{num_gpus} \times \text{img_per_gpu} $
 
-### Albumentations
+### data augmentation
 
-## config
-```shell script
-$ chmod +x tools/dist_train.sh
+* Albumentations
+* MixUp
+ 
+### DCN
 
-$ vim cascade_r50_fpn_1x.py
-$ vim cascade_x101_64x4d_fpn_1x.py 
-```
-## setup mmdet
-```shell script
-python setup.py develop
-```
+### GC(Global Context ROI)
 
-## Train
+使用Global Context ROI为每个候选框添加上下文信息，充分利用数据分布特点，提升了检测精度。
+
+
+## Training
+
 ```shell script
 python ./tools/train.py ./configs/cascade_r50_fpn_1x.py --no-validate --gpus=1
-
 ```
 
 ## Inference
+```shell script
+python ./tools/post_process/json2submmit.py
+```
 
 ## Trick
 
 ## Log
-### loss NAN error log
+
+### train log
+
+### error log (loss NAN)
 ```shell script
 2021-01-25 19:25:22,220 - mmdet - INFO - workflow: [('train', 1)], max: 12 epochs
 2021-01-25 19:25:44,459 - mmdet - INFO - Epoch [1][50/5455]	lr: 4.983e-04, eta: 8:02:25, time: 0.443, data_time: 0.047, memory: 3654, loss_rpn_cls: 0.1925, loss_rpn_bbox: 0.0304, s0.loss_cls: 0.5629, s0.acc: 87.7969, s0.loss_bbox: 0.1178, s1.loss_cls: 0.2588, s1.acc: 90.2930, s1.loss_bbox: 0.0968, s2.loss_cls: 0.1165, s2.acc: 94.1406, s2.loss_bbox: 0.0351, loss: 1.4106, grad_norm: 10.6679
@@ -87,7 +96,6 @@ python ./tools/train.py ./configs/cascade_r50_fpn_1x.py --no-validate --gpus=1
 2021-01-25 19:30:35,671 - mmdet - INFO - Epoch [1][900/5455]	lr: 1.250e-03, eta: 6:14:36, time: 0.343, data_time: 0.003, memory: 3858, loss_rpn_cls: 0.5023, loss_rpn_bbox: 0.0420, s0.loss_cls: nan, s0.acc: 0.0430, s0.loss_bbox: nan, s1.loss_cls: nan, s1.acc: 1.5000, s1.loss_bbox: nan, s2.loss_cls: nan, s2.acc: 0.1905, s2.loss_bbox: nan, loss: nan, grad_norm: nan
 2021-01-25 19:30:53,774 - mmdet - INFO - Epoch [1][950/5455]	lr: 1.250e-03, eta: 6:15:06, time: 0.362, data_time: 0.003, memory: 3858, loss_rpn_cls: 0.4698, loss_rpn_bbox: 0.0266, s0.loss_cls: nan, s0.acc: 2.0508, s0.loss_bbox: nan, s1.loss_cls: nan, s1.acc: 2.2714, s1.loss_bbox: nan, s2.loss_cls: nan, s2.acc: 1.5000, s2.loss_bbox: nan, loss: nan, grad_norm: nan
 2021-01-25 19:31:10,917 - mmdet - INFO - Exp name: cascade_r50_fpn_1x.py
-
 ```
 * acknowledge
 [Compatibility with MMDetection 1.x](https://github.com/open-mmlab/mmdetection/blob/master/docs/compatibility.md)
@@ -223,7 +231,11 @@ python ./tools/train.py ./configs/cascade_r50_fpn_1x.py --no-validate --gpus=1
 
 ```
 
+## TODO
+
+
 ## Reference
 * <https://github.com/Wakinguup/Underwater_detection>
 * <https://github.com/milleniums/underwater-object-detection-mmdetection>
 * <https://blog.csdn.net/u014479551/article/details/107762513#commentBox>
+* <https://github.com/cizhenshi/TianchiGuangdong2019_2th>
