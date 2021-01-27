@@ -8,8 +8,9 @@
 
 
 ## EDA
-[data analysis](./docs/data_analysis.ipynb)
-[check data](./docs/check_and_draw_box.ipynb)
+* [data analysis](./docs/data_analysis.ipynb)
+
+* [check data](./docs/check_and_draw_box.ipynb)
 
 ## 数据集处理
 ### load dataset
@@ -26,18 +27,22 @@ python ./tools/data_process/generate_test_anns.py
 
 ## 设计思路
 
-### 基线模型
+### 模型配置
 
 | 配置 | 设置 |
 | :-----:| :----: 
 | 模型 | CascadeRCNN + ResNeXt101 + FPN | 
 | anchor_ratio | (0.5, 1, 2) | 
-| 多尺度训练(MS)|(4096, 600), (4096, 1400)| 
-| 多尺度预测(MS)|(4096, 600), (4096, 1000), (4096, 1400)|
+| 多尺度训练(MS)|(4096, 600), (4096, 1200)| 
+| 多尺度预测(MS)|(4096, 600), (4096, 1000), (4096, 1200)|
 | soft-NMS| (iou_thr=0.5, min_score=0.0001)|
 | epoch| 1 x schedule(12 epoch)|
 | steps| [8, 12]|
-| fp16| 开启|
+| fp16|开启|
+| DCN|True|
+| GC|True|
+| data-augmentation|Albumentations, MixUP, Retinex, Rotation|
+
 | pretrained|Hybrid Task Cascade(HTC)|
 
 ### lr computer
@@ -51,9 +56,9 @@ $ lr = 0.00125 \times \text{num_gpus} \times \text{img_per_gpu} $
  
 ### DCN
 
-### GC(Global Context ROI)
+### GC
 
-使用Global Context ROI为每个候选框添加上下文信息，充分利用数据分布特点，提升了检测精度。
+使用[GC(Global Context ROI)](https://github.com/cizhenshi/TianchiGuangdong2019_2th/blob/master/src/mmdet/models/roi_extractors/single_level.py)为每个候选框添加上下文信息，充分利用数据分布特点，提升了检测精度。
 
 
 ## Training
