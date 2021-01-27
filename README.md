@@ -244,3 +244,4 @@ python ./tools/post_process/json2submmit.py
 * <https://github.com/milleniums/underwater-object-detection-mmdetection>
 * <https://blog.csdn.net/u014479551/article/details/107762513#commentBox>
 * <https://github.com/cizhenshi/TianchiGuangdong2019_2th>
+* <https://www.kesci.com/mw/project/5eb3ccf3366f4d002d76cde0>

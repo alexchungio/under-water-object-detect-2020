@@ -24,10 +24,13 @@ class SingleRoIExtractor(BaseRoIExtractor):
                  roi_layer,
                  out_channels,
                  featmap_strides,
-                 finest_scale=56):
+                 finest_scale=56,
+                 global_context=False):
         super(SingleRoIExtractor, self).__init__(roi_layer, out_channels,
                                                  featmap_strides)
         self.finest_scale = finest_scale
+        self.global_context = global_context
+        self.pool = torch.nn.AdaptiveAvgPool2d(7)
 
     def map_roi_levels(self, rois, num_levels):
         """Map rois to corresponding feature levels by scales.
@@ -53,6 +56,13 @@ class SingleRoIExtractor(BaseRoIExtractor):
     @force_fp32(apply_to=('feats', ), out_fp16=True)
     def forward(self, feats, rois, roi_scale_factor=None):
         """Forward function."""
+
+        # add global context
+        if self.global_context:
+            self.context = []
+            for feat in feats:
+                self.context.append(self.pool(feat))
+
         out_size = self.roi_layers[0].output_size
         num_levels = len(feats)
         if torch.onnx.is_in_onnx_export():
@@ -78,6 +88,9 @@ class SingleRoIExtractor(BaseRoIExtractor):
         if roi_scale_factor is not None:
             rois = self.roi_rescale(rois, roi_scale_factor)
 
+        # get batch_size
+        batch_size = feats[0].shape[0]
+
         for i in range(num_levels):
             mask = target_lvls == i
             inds = mask.nonzero(as_tuple=False).squeeze(1)
@@ -91,6 +104,9 @@ class SingleRoIExtractor(BaseRoIExtractor):
             if inds.numel() > 0:
                 rois_ = rois[inds]
                 roi_feats_t = self.roi_layers[i](feats[i], rois_)
+                if self.global_context:
+                    for j in range(batch_size):
+                        roi_feats_t[rois_[:, 0] == j] += self.context[i][j]
                 roi_feats[inds] = roi_feats_t
             else:
                 roi_feats += sum(
