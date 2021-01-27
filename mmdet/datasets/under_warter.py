@@ -25,8 +25,12 @@ class UnderWater(CustomDataset):
     def load_annotations(self, ann_file):
         self.coco = COCO(ann_file)
         self.cat_ids = self.coco.getCatIds()
-        self.cat2label = {
-            cat_id: i + 1
+        # self.cat2label = {
+        #     cat_id: i + 1
+        #     for i, cat_id in enumerate(self.cat_ids)
+        # }
+        self.cat2label = {   # compatible mmdet_v2
+            cat_id: i
             for i, cat_id in enumerate(self.cat_ids)
         }
         self.img_ids = self.coco.getImgIds()
@@ -76,13 +80,20 @@ class UnderWater(CustomDataset):
                 continue
             x1, y1, w, h = ann['bbox']
 
+            inter_w = max(0, min(x1 + w, img_w) - max(x1, 0))
+            inter_h = max(0, min(y1 + h, img_h) - max(y1, 0))
+            if inter_w * inter_h == 0:
+                continue
             if ann['area'] <= 0 or w < 1 or h < 1:
                 continue
+
+            # restrict bbox boundary
             x1 = max(x1, 0)
             y1 = max(y1, 0)
-            x2 = min(x1 + w - 1, img_w)
-            y2 = min(y1 + h - 1, img_h)
+            x2 = min(x1 + w , img_w)
+            y2 = min(y1 + h , img_h)
             bbox = [x1, y1, x2, y2]
+
             if ann.get('iscrowd', False):
                 gt_bboxes_ignore.append(bbox)
             else:

@@ -12,6 +12,7 @@ model = dict(
         norm_cfg=dict(type='BN', requires_grad=True),
         norm_eval=True,
         style='pytorch'),
+
     neck=dict(
         type='FPN',
         in_channels=[256, 512, 1024, 2048],
@@ -192,7 +193,7 @@ img_norm_cfg = dict(
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', with_bbox=True),
-    dict(type='Resize', img_scale=[(4096, 600), (4096, 1400)],
+    dict(type='Resize', img_scale=[(4096, 600), (4096, 1200)],
          multiscale_mode='range', keep_ratio=True),
     dict(type='RandomFlip', flip_ratio=0.5),
     dict(type='Normalize', **img_norm_cfg),
@@ -204,7 +205,7 @@ test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
-        img_scale=[(4096, 600), (4096, 800), (4096, 1400)],
+        img_scale=[(4096, 600), (4096, 800), (4096, 1200)],
         flip=True,
         transforms=[
             dict(type='Resize', keep_ratio=True),
@@ -231,13 +232,13 @@ data = dict(
         pipeline=test_pipeline))
 
 # optimizer
-optimizer = dict(type='SGD', lr=0.00125, momentum=0.9, weight_decay=0.0001)
+optimizer = dict(type='SGD', lr=0.0025, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
 # learning policy
 lr_config = dict(
     policy='step',
     warmup='linear',
-    warmup_iters=2000,
+    warmup_iters=1000,
     warmup_ratio=1.0 / 3,
     step=[8, 11])
 
