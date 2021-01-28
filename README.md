@@ -18,11 +18,11 @@
 
 ### convert xml to json
 ```shell script
-python ./tools/data_process/xml2coco.py
+python tools/data_process/xml2coco.py
 ```
 ### generate pseudo json label of test image 
 ```shell script
-python ./tools/data_process/generate_test_anns.py
+python tools/data_process/generate_test_anns.py
 ```
 
 ## 设计思路
@@ -58,18 +58,36 @@ $ lr = 0.00125 \times \text{num_gpus} \times \text{img_per_gpu} $
 
 ### GC
 
-使用[GC(Global Context ROI)](https://github.com/cizhenshi/TianchiGuangdong2019_2th/blob/master/src/mmdet/models/roi_extractors/single_level.py)为每个候选框添加上下文信息，充分利用数据分布特点，提升了检测精度。
+使用[GC(Global Context ROI)](./mmdet/models/roi_heads/roi_extractors/single_level_roi_extractor.py)为每个候选框添加上下文信息，充分利用数据分布特点，提升了检测精度。
 
 
 ## Training
 
 ```shell script
-python ./tools/train.py ./configs/cascade_r50_fpn_1x.py --no-validate --gpus=1
+python ./tools/train.py configs/cascade_r50_fpn_1x.py --no-validate --gpus=1
 ```
 
 ## Inference
+
+* save bbox to pickle(optional) 
 ```shell script
-python ./tools/post_process/json2submmit.py
+python tools/custom.py  configs/cascade_r50_fpn_1x.py outputs/htc_rcnn_r50_fpn_1x/latest.pth  --format-only  --out results/cascad_r50.pkl 
+
+```
+* save bbox to pickle and draw box to image(optional)
+```shell script
+python tools/custom.py configs/cascade_r50_fpn_1x.py outputs/htc_rcnn_r50_fpn_1x/latest.pth --format-only --out results/cascad_r50.pkl  --show --show-dir results/box_image
+
+```
+* save bbox to json format
+```shell script
+python tools/custom_test.py  configs/cascade_r50_fpn_1x.py outputs/htc_rcnn_r50_fpn_1x/latest.pth  --format-only  --json_out results/cascade_r50
+```
+
+## generate submit file
+```shell script
+python tools/post_process/json2submit.py --test-json results/cascade_r50.bbox.json --submit-file submmit/cascade_r50.csv
+
 ```
 
 ## Trick
@@ -235,9 +253,7 @@ python ./tools/post_process/json2submmit.py
 2021-01-27 14:57:40,137 - mmdet - INFO - Epoch [2][50/5455]     lr: 1.250e-03, eta: 5:17:38, time: 0.330, data_time: 0.044, memory: 3676, loss_rpn_cls: 0.0208, loss_rpn_bbox: 0.0180, s0.loss_cls: 0.1792, s0.acc: 93.1211, s0.loss_bbox: 0.1361, s1.loss_cls: 0.0882, s1.acc: 93.4789, s1.loss_bbox: 0.1932, s2.loss_cls: 0.0503, s2.acc: 91.9315, s2.loss_bbox: 0.1200, loss: 0.8058, grad_norm: 5.8763
 
 ```
-
 ## TODO
-
 
 ## Reference
 * <https://github.com/Wakinguup/Underwater_detection>
