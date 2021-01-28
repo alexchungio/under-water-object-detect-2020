@@ -90,6 +90,18 @@ python tools/post_process/json2submit.py --test-json results/cascade_r50.bbox.js
 
 ```
 
+## test-demo
+```shell script
+python tools/post_process/detect_demo.py
+```
+<table>
+    <tr>
+        <td ><center><img src="./docs/demo/demo_1.jpg" width="50%" > 测试图片 </center></td>
+        <td ><center><img src="./docs/demo/detect.jpg" width="50%"> 检测图片 </center></td>
+    </tr>
+ 
+</table>
+
 ## Trick
 
 ## Log

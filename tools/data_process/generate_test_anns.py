@@ -47,7 +47,7 @@ def test_dataset(im_dir, path):
         w, h = im.size
         image = {'file_name': os.path.basename(im_path), 'width': w, 'height': h, 'id': image_id}
         images.append(image)
-        labels = [[10, 10, 20, 20]]
+        labels = [[1, 2, 3, 4]]
         for label in labels:
             bbox = [label[0], label[1], label[2] - label[0], label[3] - label[1]]
             seg = []
