@@ -96,10 +96,13 @@ python tools/post_process/detect_demo.py
 ```
 <table>
     <tr>
-        <td ><center><img src="./docs/demo/demo_1.jpg"  > 测试图片 </center> </td>
-        <td ><center><img src="./docs/demo/detect.jpg"  > 检测图片 </center> </td>
+        <td align="center"><img src="./docs/demo/demo_1.jpg"></td> 
+        <td align="center"><img src="./docs/demo/detect.jpg"></td> 
     </tr>
-
+    <tr>
+        <td align="center">test-image</td>
+        <td align="center">detect-image</td>
+    </tr>     
 </table>
 
 ## Trick
