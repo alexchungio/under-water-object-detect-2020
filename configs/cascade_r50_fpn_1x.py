@@ -182,8 +182,9 @@ test_cfg = dict(
         nms_thr=0.7,
         min_bbox_size=0),
     rcnn=dict(
-        score_thr=0.05,
-        nms=dict(type='soft_nms', iou_thr=0.5, min_score=0.001),
+        # score_thr=0.05,
+        score_thr=0.0001,  # score_thr: 0.05 => 0.0001
+        nms=dict(type='soft_nms', iou_threshold=0.5, min_score=0.001), # num
         max_per_img=100))
 # dataset settings
 dataset_type = 'UnderWater'
@@ -191,12 +192,42 @@ data_root = '/media/alex/80CA308ECA308288/alex_dataset/URPC-2020/'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 
+# albumentations augmentation
+albu_train_transforms = [
+                         # dict(type='RandomRotate90',
+                         #      always_apply=False,
+                         #      p=0.5),
+                         dict(
+                             type='OneOf',
+                             transforms=[
+                                 dict(type='RandomRotate90', always_apply=False, p=0.5),
+                                 dict(type='CLAHE', clip_limit=2),
+                                 dict(type='IAASharpen'),
+                                 dict(type='IAAEmboss'),
+                                 dict(type='RandomBrightnessContrast'),
+                             ],
+                             p=0.3),
+                         ]#
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', with_bbox=True),
+    dict(type='MixUp',p=0.5, lambd=0.5), # add mixup
     dict(type='Resize', img_scale=[(4096, 600), (4096, 1200)],
          multiscale_mode='range', keep_ratio=True),
     dict(type='RandomFlip', flip_ratio=0.5),
+    # dict(type='MotionBlur', p=0.3),
+    dict(type='Albu',
+             transforms=albu_train_transforms,
+             bbox_params=dict(type='BboxParams',
+                              format='pascal_voc',
+                              label_fields=['gt_labels'],
+                              min_visibility=0.0,
+                              filter_lost_elements=True),
+             keymap={'img': 'image', 'gt_bboxes': 'bboxes'},
+             update_pad_shape=False,
+             skip_img_without_anno=True),
+    dict(type='Retinex', model='MSR', sigma=[30, 150, 300],
+         restore_factor=2.0, color_gain=6.0, gain=128.0, offset=128.0),
     dict(type='Normalize', **img_norm_cfg),
     dict(type='Pad', size_divisor=32),
     dict(type='DefaultFormatBundle'),
@@ -230,6 +261,7 @@ data = dict(
         type=dataset_type,
         ann_file=data_root + 'train/annotation/testA.json',
         img_prefix=data_root + 'test-A-image/',
+        # img_prefix=data_root + 'test-image/',
         pipeline=test_pipeline))
 
 # optimizer

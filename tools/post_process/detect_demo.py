@@ -44,7 +44,7 @@ def draw_detect_bbox(image, bboxs, labels, scores, class_name, color):
     print('image shape ({},{})'.format(img_w, img_h))
     # set font
     font = ImageFont.truetype(font=fm.findfont(fm.FontProperties()),
-                              size=np.floor(1.5e-2 * img_w ).astype(np.int32), encoding="unic")
+                              size=np.floor(1.0e-2 * img_w ).astype(np.int32), encoding="unic")
 
     # draw box
     draw = ImageDraw.Draw(image)

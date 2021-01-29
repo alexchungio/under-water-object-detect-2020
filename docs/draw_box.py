@@ -19,7 +19,7 @@ import matplotlib.font_manager as fm
 from PIL import ImageColor
 
 
-def draw_box_with_pil(image, bbox, label, color_dict):
+def draw_box_with_pillow(image, bbox, label, color_dict):
     """
 
     :param image:
@@ -94,17 +94,17 @@ def draw_box_with_opencv(image, bbox, label, color_dict):
 
 def main():
 
-    img_path = './demo/demo.jpg'
-    pil_color_dict = {'echinus': 'red', 'starfish': 'green', 'holothurian': 'blue', 'scallop': 'yellow'}
+    img_path = './demo/demo_0.jpg'
+    pil_color_dict = {'echinus': 'red', 'starfish': 'green', 'holothurian': 'blue', 'scallop': 'purple'}
     opencv_color_dict = {'echinus': ImageColor.getcolor('red', 'RGB')[::-1],
                          'starfish': ImageColor.getcolor('green', 'RGB')[::-1],
                          'holothurian': ImageColor.getcolor('blue', 'RGB')[::-1],
-                         'scallop': ImageColor.getcolor('yellow', 'RGB')[::-1]}
+                         'scallop': ImageColor.getcolor('purple', 'RGB')[::-1]}
     # bbox = [[890, 593, 1463, 990]]
     bbox = [[890, 593, 1463, 990]]
     label = ['starfish']
     img = Image.open(img_path)
-    draw_box_with_pil(img, bbox, label, pil_color_dict)
+    draw_box_with_pillow(img, bbox, label, pil_color_dict)
     draw_box_with_opencv(img, bbox, label, opencv_color_dict)
 
 

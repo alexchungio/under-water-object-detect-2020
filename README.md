@@ -51,9 +51,10 @@ $ lr = 0.00125 \times \text{num_gpus} \times \text{img_per_gpu} $
 
 ### data augmentation
 
-* Albumentations
 * MixUp
- 
+* Albumentations
+* Retinex
+
 ### DCN
 
 ### GC
