@@ -72,12 +72,12 @@ python ./tools/train.py configs/cascade_r50_fpn_1x.py --no-validate --gpus=1
 
 * save bbox to pickle(optional) 
 ```shell script
-python tools/custom.py  configs/cascade_r50_fpn_1x.py outputs/htc_rcnn_r50_fpn_1x/latest.pth  --format-only  --out results/cascad_r50.pkl 
+python tools/test.py  configs/cascade_r50_fpn_1x.py outputs/htc_rcnn_r50_fpn_1x/latest.pth  --format-only  --out results/cascad_r50.pkl 
 
 ```
 * save bbox to pickle and draw box to image(optional)
 ```shell script
-python tools/custom.py configs/cascade_r50_fpn_1x.py outputs/htc_rcnn_r50_fpn_1x/latest.pth --format-only --out results/cascad_r50.pkl  --show --show-dir results/box_image
+python tools/test.py configs/cascade_r50_fpn_1x.py outputs/htc_rcnn_r50_fpn_1x/latest.pth --format-only --out results/cascad_r50.pkl  --show --show-dir results/box_image
 
 ```
 * save bbox to json format
@@ -277,3 +277,4 @@ python tools/post_process/detect_demo.py
 * <https://blog.csdn.net/u014479551/article/details/107762513#commentBox>
 * <https://github.com/cizhenshi/TianchiGuangdong2019_2th>
 * <https://www.kesci.com/mw/project/5eb3ccf3366f4d002d76cde0>
+* <https://github.com/ZFTurbo/Weighted-Boxes-Fusion>

@@ -4,15 +4,18 @@ model = dict(
     type='CascadeRCNN',
     pretrained=None,
     backbone=dict(
-        type='ResNet',
-        depth=50,
-        num_stages=4,
-        out_indices=(0, 1, 2, 3),
-        frozen_stages=1,
-        norm_cfg=dict(type='BN', requires_grad=True),
-        norm_eval=True,
-        style='pytorch'),
-
+            type='ResNeXt',
+            depth=101,
+            groups=64,
+            base_width=4,
+            num_stages=4,
+            out_indices=(0, 1, 2, 3),
+            frozen_stages=1,
+            norm_cfg=dict(type='BN', requires_grad=True),
+            norm_eval=True,
+            style='pytorch',
+            dcn=dict(type='DCN', deform_groups=1, fallback_on_stride=False), # use dcn module
+            stage_with_dcn=(False, True, True, True)),
     neck=dict(
         type='FPN',
         in_channels=[256, 512, 1024, 2048],
@@ -288,7 +291,7 @@ log_config = dict(
 total_epochs = 12
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
-work_dir = './outputs/htc_rcnn_r50_fpn_1x'
-load_from = data_root + 'pretrained/htc_r50_fpn_20e_coco_20200319-fe28c577.pth'
+work_dir = './outputs/htc_x101_64x4d_fpn_1x'
+load_from = data_root + 'pretrained/htc_x101_64x4d_fpn_dconv_c3-c5_mstrain_400_1400_16x1_20e_coco_20200312-946fd751.pth'
 resume_from = None
 workflow = [('train', 1)]
