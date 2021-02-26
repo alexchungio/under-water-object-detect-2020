@@ -148,7 +148,7 @@ python tools/post_process/detect_demo.py
 * method
     * 数据清理: 确保gt_box的边框不超过图片尺度的大小[check_and_draw_box](./docs/check_and_draw_box.ipynb)
     * num_classes 大小设置: mmedetection  v1 与 v2 版本的 num_classes 配置策略不同, 在v1中 num_classes 设置为**真实类别数+1**, 在v2中 num_classes 直接设置为**真实类别数**。以4分类目标检测为例， v1中设置为num_classes=5，背景的标签默认为0. mmdet_v2 中设置为num_classes=4. 这里需要修改[配置文件](./configs/cascade_r50_fpn_1x.py)中**num_classes**的个数
-    * 真实类label映射的设置：假设数据即中真实的类别标签个数为k, 在 mmdet_v1 中真实类标签的label的范围为**[1, k-1]**， 背景对应的label为0; mmdet_v2中真实的类标签的label范围为**[0, k-1]**), 背景对应的label为k, 这里需要修改数据集处理涉及的两个文件[xml2coco.py](./tools/data_process/xml2coco.py)和[xml2co.py](./tools/generate_test_anns.py/generate_test_anns.py)
+    * 真实类label映射的设置：假设数据即中真实的类别标签个数为k, 在 mmdet_v1 中真实类标签的label的范围为**[1, k-1]**， 背景对应的label为0; mmdet_v2中真实的类标签的label范围为**[0, k-1]**), 背景对应的label为k, 这里需要修改数据集处理涉及的两个文件[xml2coco.py](./tools/data_process/xml2coco.py)和[generate_test_anns.py](./tools/data_process/generate_test_anns.py)
     * **同时注意修改自定义数据集模块 [under_warter](./mmdet/datasets/under_warter.py)中 cat_id 字典映射的值**
  
 * normal training log

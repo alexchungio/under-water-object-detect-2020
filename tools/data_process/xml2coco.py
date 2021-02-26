@@ -23,7 +23,8 @@ from glob import glob
 from tqdm import tqdm
 from PIL import Image
 
-cat_label = {name: i for i, name in enumerate(underwater_classes())}  # for mmdet_v1
+# cat_label = {name: i+1 for i, name in enumerate(underwater_classes())}  # for mmdet_v1
+cat_label = {name: i for i, name in enumerate(underwater_classes())}  # for mmdet_v2
 
 def get_segmentation(points):
 
